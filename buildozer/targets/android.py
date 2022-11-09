@@ -720,6 +720,9 @@ class TargetAndroid(Target):
         })
 
     def _install_p4a(self):
+        if self.buildozer.config.getdefault('app', 'p4a.install') == 'false':
+            return
+
         cmd = self.buildozer.cmd
         p4a_fork = self.buildozer.config.getdefault(
             'app', 'p4a.fork', self.p4a_fork
