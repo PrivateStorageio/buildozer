@@ -697,8 +697,14 @@ class TargetAndroid(Target):
     def install_platform(self):
         self._install_p4a()
         self._install_apache_ant()
-        self._install_android_sdk()
-        self._install_android_ndk()
+
+        if 'ANDROIDSDK' not in self.buildozer.environ:
+            self._install_android_sdk()
+            self.buildozer.environ['ANDROIDSDK'] = self.android_sdk_dir
+        if 'ANDROIDNDK' not in self.buildozer.environ:
+            self._install_android_ndk()
+            self.buildozer.environ['ANDROIDNDK'] = self.android_ndk_dir
+
         self._install_android_packages()
 
         # ultimate configuration check.
@@ -713,8 +719,6 @@ class TargetAndroid(Target):
 
         self.buildozer.environ.update({
             'PACKAGES_PATH': self.buildozer.global_packages_dir,
-            'ANDROIDSDK': self.android_sdk_dir,
-            'ANDROIDNDK': self.android_ndk_dir,
             'ANDROIDAPI': self.android_api,
             'ANDROIDMINAPI': self.android_minapi,
         })
