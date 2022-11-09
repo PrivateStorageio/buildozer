@@ -129,7 +129,10 @@ class TargetAndroid(Target):
                 self.buildozer.error(error)
 
     def _p4a(self, cmd, **kwargs):
-        kwargs.setdefault('cwd', self.p4a_dir)
+        if self._should_install_p4a():
+            # If we didn't install it, we don't need to mess around with the
+            # working directory to run it.
+            kwargs.setdefault('cwd', self.p4a_dir)
         return self.buildozer.cmd([*self._p4a_cmd, *cmd, *self.extra_p4a_args], **kwargs)
 
     @property
@@ -735,8 +738,11 @@ class TargetAndroid(Target):
             'ANDROIDMINAPI': self.android_minapi,
         })
 
+    def _should_install_p4a(self):
+        return self.buildozer.config.getdefault('app', 'p4a.install') != 'false'
+
     def _install_p4a(self):
-        if self.buildozer.config.getdefault('app', 'p4a.install') == 'false':
+        if not self._should_install_p4a():
             self.buildozer.info('Configuration declines p4a installation')
             return
 
