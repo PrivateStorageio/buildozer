@@ -698,12 +698,18 @@ class TargetAndroid(Target):
         self._install_p4a()
         self._install_apache_ant()
 
-        if 'ANDROIDSDK' not in self.buildozer.environ:
+        e = self.buildozer.environ
+        if 'ANDROIDSDK' in e:
+            self.buildozer.info(f'ANDROIDSDK found at {e["ANDROIDSDK"]}')
+        else:
             self._install_android_sdk()
-            self.buildozer.environ['ANDROIDSDK'] = self.android_sdk_dir
-        if 'ANDROIDNDK' not in self.buildozer.environ:
+            e['ANDROIDSDK'] = self.android_sdk_dir
+
+        if 'ANDROIDNDK' in e:
+            self.buildozer.info(f'ANDROIDNDK found at {e["ANDROIDNDK"]}')
+        else:
             self._install_android_ndk()
-            self.buildozer.environ['ANDROIDNDK'] = self.android_ndk_dir
+            e['ANDROIDNDK'] = self.android_ndk_dir
 
         self._install_android_packages()
 
@@ -725,6 +731,7 @@ class TargetAndroid(Target):
 
     def _install_p4a(self):
         if self.buildozer.config.getdefault('app', 'p4a.install') == 'false':
+            self.buildozer.info('Configuration declines p4a installation')
             return
 
         cmd = self.buildozer.cmd
