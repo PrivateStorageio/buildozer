@@ -212,6 +212,10 @@ class TargetAndroid(Target):
 
     @property
     def android_sdk_dir(self):
+        try:
+            return environ['ANDROIDSDK']
+        except KeyError:
+            pass
         directory = expanduser(self.buildozer.config.getdefault(
             'app', 'android.sdk_path', ''))
         if directory:
@@ -221,6 +225,10 @@ class TargetAndroid(Target):
 
     @property
     def android_ndk_dir(self):
+        try:
+            return environ['ANDROIDNDK']
+        except KeyError:
+            pass
         directory = expanduser(self.buildozer.config.getdefault(
             'app', 'android.ndk_path', ''))
         if directory:
