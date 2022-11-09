@@ -698,18 +698,16 @@ class TargetAndroid(Target):
         self._install_p4a()
         self._install_apache_ant()
 
-        e = self.buildozer.environ
-        if 'ANDROIDSDK' in e:
-            self.buildozer.info(f'ANDROIDSDK found at {e["ANDROIDSDK"]}')
-        else:
-            self._install_android_sdk()
-            e['ANDROIDSDK'] = self.android_sdk_dir
-
-        if 'ANDROIDNDK' in e:
-            self.buildozer.info(f'ANDROIDNDK found at {e["ANDROIDNDK"]}')
-        else:
-            self._install_android_ndk()
-            e['ANDROIDNDK'] = self.android_ndk_dir
+        for k, f in [
+            ('ANDROIDSDK', self._install_android_sdk),
+            ('ANDROIDNDK', self._install_android_ndk),
+        ]:
+            try:
+                self.buildozer.environ[k] = environ[k]
+            except KeyError:
+                e[k] = f()
+            else:
+                self.buildozer.info(f'{k} found at {e[k]}')
 
         self._install_android_packages()
 
