@@ -703,11 +703,11 @@ class TargetAndroid(Target):
             ('ANDROIDNDK', self._install_android_ndk),
         ]:
             try:
-                self.buildozer.environ[k] = environ[k]
+                v = self.buildozer.environ[k] = environ[k]
             except KeyError:
                 e[k] = f()
             else:
-                self.buildozer.info(f'{k} found at {e[k]}')
+                self.buildozer.info(f'{k} found at {v}')
 
         self._install_android_packages()
 
